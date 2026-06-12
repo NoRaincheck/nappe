@@ -8,10 +8,10 @@ import tempfile
 import time
 from dataclasses import dataclass
 
-from theseus_ship.cache import Cache
-from theseus_ship.grammar import Grammar, detect_language, load_grammar
-from theseus_ship.parser import parse_source
-from theseus_ship.transforms import apply_transform, generate_candidates
+from nappe.cache import Cache
+from nappe.grammar import Grammar, detect_language, load_grammar
+from nappe.parser import parse_source
+from nappe.transforms import apply_transform, generate_candidates
 
 
 @dataclass

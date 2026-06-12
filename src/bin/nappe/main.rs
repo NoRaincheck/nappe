@@ -5,13 +5,13 @@ use std::process;
 
 use clap::{Parser, Subcommand};
 
-use theseus_ship::grammar::{detect_language, load_grammar};
-use theseus_ship::reducer::Reducer;
-use theseus_ship::shrink::run_shrink;
+use nappe::grammar::{detect_language, load_grammar};
+use nappe::reducer::Reducer;
+use nappe::shrink::run_shrink;
 
 #[derive(Parser)]
 #[command(
-    name = "unfluff",
+    name = "nappe",
     version,
     about = "Syntax-guided program reduction (Perses algorithm)"
 )]
@@ -224,7 +224,7 @@ fn main() {
 
     if cli.legacy {
         let mut cmd = process::Command::new("uv");
-        cmd.arg("run").arg("theseus");
+        cmd.arg("run").arg("nappe");
         for arg in env::args().skip(1) {
             if arg == "--legacy" {
                 continue;
@@ -279,7 +279,7 @@ fn main() {
             let input = match input {
                 Some(i) => i,
                 None => {
-                    eprintln!("Error: input file required (or use: unfluff reduce <file>)");
+                    eprintln!("Error: input file required (or use: nappe reduce <file>)");
                     process::exit(1);
                 }
             };
@@ -392,9 +392,9 @@ fn main() {
             verbose: _,
             quiet,
         }) => {
-            use theseus_ship::checker::all_checks;
-            use theseus_ship::diff::{apply_fixes, format_diff, format_json, format_text};
-            use theseus_ship::rules::FixSafety;
+            use nappe::checker::all_checks;
+            use nappe::diff::{apply_fixes, format_diff, format_json, format_text};
+            use nappe::rules::FixSafety;
 
             let file_patterns = if files.is_empty() {
                 vec![".".to_string()]

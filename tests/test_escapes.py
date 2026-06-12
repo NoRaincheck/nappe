@@ -1,11 +1,11 @@
-from theseus_ship.escapes import (
+from nappe.escapes import (
     IdentifierOccurrence,
     remove_dead_assignment,
     shorten_identifier,
     simplify_expression,
     try_escape_transforms,
 )
-from theseus_ship.grammar import load_grammar
+from nappe.grammar import load_grammar
 from tree_sitter import Parser
 
 

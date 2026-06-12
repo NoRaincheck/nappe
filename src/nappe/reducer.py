@@ -9,13 +9,13 @@ import tempfile
 import time
 from dataclasses import dataclass
 
-from theseus_ship.cache import Cache
-from theseus_ship.escapes import try_escape_transforms
-from theseus_ship.grammar import Grammar, load_grammar
-from theseus_ship.parser import parse_source
-from theseus_ship.token_reduce import token_reduce
-from theseus_ship.transforms import apply_transform, generate_candidates
-from theseus_ship.tree import ParseResult
+from nappe.cache import Cache
+from nappe.escapes import try_escape_transforms
+from nappe.grammar import Grammar, load_grammar
+from nappe.parser import parse_source
+from nappe.token_reduce import token_reduce
+from nappe.transforms import apply_transform, generate_candidates
+from nappe.tree import ParseResult
 
 
 @dataclass

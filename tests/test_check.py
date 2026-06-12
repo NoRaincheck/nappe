@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from theseus_ship.grammar import load_grammar
-from theseus_ship.checker import (
+from nappe.grammar import load_grammar
+from nappe.checker import (
     check_constant_expressions,
     check_dead_classes,
     check_dead_functions,
@@ -13,8 +13,8 @@ from theseus_ship.checker import (
     check_unnecessary_semicolons,
     check_unused_assignments,
 )
-from theseus_ship.diff import apply_fixes, format_text
-from theseus_ship.rules import FixSafety
+from nappe.diff import apply_fixes, format_text
+from nappe.rules import FixSafety
 
 
 class TestCheckTrailingWhitespace:

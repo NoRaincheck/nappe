@@ -5,7 +5,7 @@ from typing import Any
 
 from tree_sitter import Parser
 
-from theseus_ship.grammar import Grammar
+from nappe.grammar import Grammar
 
 
 @dataclass

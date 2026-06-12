@@ -1,12 +1,12 @@
-# unfluff - Agent Instructions
+# nappe - Agent Instructions
 
 ## Project Overview
 
-unfluff is a syntax-guided test case reducer implementing the Perses
+nappe is a syntax-guided test case reducer implementing the Perses
 algorithm, based on the Rust reference implementation
 [bonsai](https://github.com/nnunley/bonsai).
 
-Given a failing test case and a program file that triggers a bug, unfluff
+Given a failing test case and a program file that triggers a bug, nappe
 reduces the file to the smallest possible program that still reproduces the
 failure — while guaranteeing syntactic validity at every step.
 
@@ -18,7 +18,7 @@ The Rust implementation lives in `src/` and is built with `cargo`.
 
 ```
 src/
-├── bin/unfluff/main.rs — CLI entry point
+├── bin/nappe/main.rs — CLI entry point
 ├── lib.rs                   — library root
 ├── cache.rs                 — content-hash caching
 ├── checker.rs               — static analysis checks
@@ -40,12 +40,12 @@ reparse+validate → interestingness test → accept/reject → loop
 
 ### Python (reference)
 
-The Python implementation lives in `src/theseus_ship/` and is kept for
+The Python implementation lives in `src/nappe/` and is kept for
 comparison and as a reference for the algorithm. Accessible via the `--legacy`
 flag.
 
 ```
-src/theseus_ship/
+src/nappe/
 ├── cli.py        — argparse CLI, file I/O, language detection
 ├── grammar.py    — tree-sitter language loading, error-node detection
 ├── parser.py     — source parsing, CST walk, token counting
@@ -101,9 +101,9 @@ cargo fmt                  # format
 ### Python (reference)
 
 ```bash
-uv run ruff check src/theseus_ship/
-uv run ruff format src/theseus_ship/
-uv run ty check src/theseus_ship/
+uv run ruff check src/nappe/
+uv run ruff format src/nappe/
+uv run ty check src/nappe/
 uv run pytest tests/
 ```
 

@@ -1,6 +1,6 @@
 import pytest
 
-from theseus_ship.grammar import detect_language, load_grammar
+from nappe.grammar import detect_language, load_grammar
 
 
 class TestGrammar:

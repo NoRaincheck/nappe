@@ -1,4 +1,4 @@
-# unfluff
+# nappe
 
 A syntax-guided test case reducer implementing the
 [Perses](https://doi.org/10.1145/3180155.3180236) algorithm (Sun et al., ICSE 2018).
@@ -8,7 +8,7 @@ Reference implementation: [nnunley/bonsai](https://github.com/nnunley/bonsai)
 
 ## What It Does
 
-Given a failing test case and a program file that triggers a bug, unfluff
+Given a failing test case and a program file that triggers a bug, nappe
 reduces the file to the smallest possible program that still reproduces the
 failure — while guaranteeing syntactic validity at every step.
 
@@ -54,7 +54,7 @@ The project has two implementations:
 
 - **Rust** (primary) — native implementation in `src/`, built with `cargo`. This
   is the default and recommended implementation.
-- **Python** (reference) — pure Python implementation in `src/theseus_ship/`,
+- **Python** (reference) — pure Python implementation in `src/nappe/`,
   kept for comparison and as a reference for the algorithm. Accessible via the
   `--legacy` flag.
 
@@ -70,7 +70,7 @@ with the Python reference.
 
 ```bash
 cargo build --release
-cp target/release/unfluff ~/.local/bin/
+cp target/release/nappe ~/.local/bin/
 ```
 
 ### Python (reference)
@@ -81,48 +81,48 @@ uv sync
 
 ## Usage
 
-### `unfluff reduce` — Syntax-guided reduction (default)
+### `nappe reduce` — Syntax-guided reduction (default)
 
 ```bash
 # Reduce using a pytest interestingness test (recommended)
-unfluff reduce --test test_interesting.py::test_still_fails input.py
+nappe reduce --test test_interesting.py::test_still_fails input.py
 
 # Reduce using a shell command
-unfluff reduce --test-cmd "grep -q 'error'" input.py
+nappe reduce --test-cmd "grep -q 'error'" input.py
 
 # Auto-reduce to smallest valid program (no test needed)
-unfluff reduce --auto input.py
+nappe reduce --auto input.py
 
 # Limit reduction time
-unfluff reduce --test test_interesting.py --max-time 30m --max-tests 1000 input.py
+nappe reduce --test test_interesting.py --max-time 30m --max-tests 1000 input.py
 
 # Use Python implementation (legacy)
-unfluff --legacy reduce --test test_interesting.py::test_still_fails input.py
+nappe --legacy reduce --test test_interesting.py::test_still_fails input.py
 ```
 
-### `unfluff check` — Static analysis and fixes
+### `nappe check` — Static analysis and fixes
 
 ```bash
 # Check files for reducible patterns
-unfluff check src/**/*.py
+nappe check src/**/*.py
 
 # Apply safe fixes automatically
-unfluff check --fix src/**/*.py
+nappe check --fix src/**/*.py
 
 # Apply all fixes (including unsafe ones like dead code removal)
-unfluff check --unsafe-fixes src/**/*.py
+nappe check --unsafe-fixes src/**/*.py
 
 # Output as JSON
-unfluff check --output-format json src/**/*.py
+nappe check --output-format json src/**/*.py
 
 # Filter by rule
-unfluff check --select RED200,RED201 src/**/*.py
+nappe check --select RED200,RED201 src/**/*.py
 ```
 
-### `unfluff shrink` — Shrinkray-compatible interface
+### `nappe shrink` — Shrinkray-compatible interface
 
 ```bash
-unfluff shrink "./check.sh" input.py
+nappe shrink "./check.sh" input.py
 ```
 
 ### Check Rules
@@ -187,7 +187,7 @@ def test_still_fails():
 Run the reducer:
 
 ```bash
-unfluff reduce --test test_interesting.py::test_still_fails input.py
+nappe reduce --test test_interesting.py::test_still_fails input.py
 ```
 
 **After** (`input.py`):
@@ -262,7 +262,7 @@ greet("world")
 Run the checker:
 
 ```bash
-unfluff check demo.py
+nappe check demo.py
 ```
 
 **Output:**
@@ -298,7 +298,7 @@ Found 6 issues (2 safe, 4 unsafe).
 Apply safe fixes:
 
 ```bash
-unfluff check --fix demo.py
+nappe check --fix demo.py
 ```
 
 **After** (`demo.py`):
@@ -339,9 +339,9 @@ cargo fmt                  # format
 ### Python (reference)
 
 ```bash
-uv run ruff check src/theseus_ship/     # lint
-uv run ruff format src/theseus_ship/    # format
-uv run ty check src/theseus_ship/       # type check
+uv run ruff check src/nappe/     # lint
+uv run ruff format src/nappe/    # format
+uv run ty check src/nappe/       # type check
 uv run pytest tests/                    # test
 ```
 
@@ -351,4 +351,4 @@ MIT
 
 ## References
 
-- [Syntax-Guided Program Reduction: A Survey and the unfluff Implementation](ref/syntax-guided-program-reduction-survey.pdf) — Review paper covering the Perses algorithm, related work, and the unfluff system.
+- [Syntax-Guided Program Reduction: A Survey and the nappe Implementation](ref/syntax-guided-program-reduction-survey.pdf) — Review paper covering the Perses algorithm, related work, and the nappe system.

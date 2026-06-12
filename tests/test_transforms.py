@@ -1,6 +1,6 @@
-from theseus_ship.grammar import load_grammar
-from theseus_ship.parser import parse_source
-from theseus_ship.transforms import (
+from nappe.grammar import load_grammar
+from nappe.parser import parse_source
+from nappe.transforms import (
     apply_delete,
     apply_transform,
     apply_unwrap,
@@ -8,7 +8,7 @@ from theseus_ship.transforms import (
     generate_candidates,
     result_error_count,
 )
-from theseus_ship.tree import NodeInfo, TransformCandidate, TransformKind
+from nappe.tree import NodeInfo, TransformCandidate, TransformKind
 
 
 class TestApplyDelete:
@@ -362,7 +362,7 @@ class TestDdmin:
         source = b"def foo():\n    x = 1\n    y = 2\n    z = 3\n"
         result = parse_source(source, grammar)
         block = next(n for n in result.all_nodes if n.kind == "block")
-        from theseus_ship.transforms import apply_ddmin
+        from nappe.transforms import apply_ddmin
         final = apply_ddmin(
             source, block, grammar,
             is_interesting=lambda s: True,

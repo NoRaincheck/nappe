@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections import deque
 from typing import Callable
 
-from theseus_ship.grammar import Grammar, _KEYWORD_KINDS
-from theseus_ship.parser import parse_source, reparse_source
-from theseus_ship.tree import NodeInfo, ParseResult, TransformCandidate, TransformKind
+from nappe.grammar import Grammar, _KEYWORD_KINDS
+from nappe.parser import parse_source, reparse_source
+from nappe.tree import NodeInfo, ParseResult, TransformCandidate, TransformKind
 
 
 def bounded_bfs(

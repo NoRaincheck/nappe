@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from theseus_ship.cache import Cache
-from theseus_ship.shrink import ShrinkReducer, run_shrink
+from nappe.cache import Cache
+from nappe.shrink import ShrinkReducer, run_shrink
 
 
 class TestShrinkCache:
@@ -25,28 +25,28 @@ class TestShrinkCache:
 
 class TestShrinkReducer:
     def test_is_interesting_success(self) -> None:
-        from theseus_ship.grammar import load_grammar
+        from nappe.grammar import load_grammar
 
         grammar = load_grammar("python")
         reducer = ShrinkReducer(grammar, test_command="true")
         assert reducer._is_interesting(b"anything", None) is True
 
     def test_is_interesting_failure(self) -> None:
-        from theseus_ship.grammar import load_grammar
+        from nappe.grammar import load_grammar
 
         grammar = load_grammar("python")
         reducer = ShrinkReducer(grammar, test_command="false")
         assert reducer._is_interesting(b"anything", None) is False
 
     def test_is_interesting_receives_stdin(self) -> None:
-        from theseus_ship.grammar import load_grammar
+        from nappe.grammar import load_grammar
 
         grammar = load_grammar("python")
         reducer = ShrinkReducer(grammar, test_command="cat")
         assert reducer._is_interesting(b"test content", None) is True
 
     def test_is_interesting_passes_file_arg(self) -> None:
-        from theseus_ship.grammar import load_grammar
+        from nappe.grammar import load_grammar
 
         grammar = load_grammar("python")
         reducer = ShrinkReducer(
@@ -109,7 +109,7 @@ class TestRunShrink:
 class TestCLIShrinkSubcommand:
     def test_shrink_help(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "theseus_ship", "shrink", "--help"],
+            [sys.executable, "-m", "nappe", "shrink", "--help"],
             capture_output=True,
             text=True,
         )
@@ -118,7 +118,7 @@ class TestCLIShrinkSubcommand:
 
     def test_shrink_missing_args(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "theseus_ship", "shrink"],
+            [sys.executable, "-m", "nappe", "shrink"],
             capture_output=True,
             text=True,
         )

@@ -1,6 +1,6 @@
 # Benchmarks
 
-Comparison of the Python and Rust implementations of unfluff.
+Comparison of the Python and Rust implementations of nappe.
 
 ## Auto-reduce mode (`--auto`)
 

@@ -34,6 +34,49 @@ wheels = [
 ]
 
 [[package]]
+name = "nappe"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "tree-sitter" },
+    { name = "tree-sitter-c" },
+    { name = "tree-sitter-cpp" },
+    { name = "tree-sitter-go" },
+    { name = "tree-sitter-javascript" },
+    { name = "tree-sitter-python" },
+    { name = "tree-sitter-rust" },
+    { name = "tree-sitter-typescript" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "deno" },
+    { name = "pytest" },
+    { name = "ruff" },
+    { name = "ty" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "tree-sitter", specifier = ">=0.25.2" },
+    { name = "tree-sitter-c", specifier = ">=0.24.2" },
+    { name = "tree-sitter-cpp", specifier = ">=0.23.4" },
+    { name = "tree-sitter-go", specifier = ">=0.25.0" },
+    { name = "tree-sitter-javascript", specifier = ">=0.25.0" },
+    { name = "tree-sitter-python", specifier = ">=0.25.0" },
+    { name = "tree-sitter-rust", specifier = ">=0.24.2" },
+    { name = "tree-sitter-typescript", specifier = ">=0.23.2" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "deno", specifier = ">=2.8.3" },
+    { name = "pytest", specifier = ">=8.0.0" },
+    { name = "ruff", specifier = ">=0.15.17" },
+    { name = "ty", specifier = ">=0.0.49" },
+]
+
+[[package]]
 name = "packaging"
 version = "26.2"
 source = { registry = "https://pypi.org/simple" }
@@ -99,49 +142,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/49/71/9b29d6b87cef468d697f43c6a91e3fae4a80185779d7d5a4ef27d173439f/ruff-0.15.17-py3-none-win32.whl", hash = "sha256:596065960ab1ff593f744220c9fe6580eda00a95003cffa9f4048bb5b1bf0392", size = 10925574, upload-time = "2026-06-11T17:54:55.723Z" },
     { url = "https://files.pythonhosted.org/packages/3d/b2/8fc77f3723228836fa5d12497eb71c808f83782e10d058d2b15cfa14640b/ruff-0.15.17-py3-none-win_amd64.whl", hash = "sha256:6769e5fa1710b179b92e0bfa5a51735b35baea9013dadb06d5f44cbcf9547084", size = 12058788, upload-time = "2026-06-11T17:54:41.042Z" },
     { url = "https://files.pythonhosted.org/packages/2d/c7/c53e8dbff9c9dc4b7928773421ae294a5d28fcb8dcda1a089579d3a7e510/ruff-0.15.17-py3-none-win_arm64.whl", hash = "sha256:f3be1fbb34bcdfd146240d8fb92a709d4c2c8191348580a3c044ec60fa0b4456", size = 11355275, upload-time = "2026-06-11T17:54:43.635Z" },
-]
-
-[[package]]
-name = "theseus-ship"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "tree-sitter" },
-    { name = "tree-sitter-c" },
-    { name = "tree-sitter-cpp" },
-    { name = "tree-sitter-go" },
-    { name = "tree-sitter-javascript" },
-    { name = "tree-sitter-python" },
-    { name = "tree-sitter-rust" },
-    { name = "tree-sitter-typescript" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "deno" },
-    { name = "pytest" },
-    { name = "ruff" },
-    { name = "ty" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "tree-sitter", specifier = ">=0.25.2" },
-    { name = "tree-sitter-c", specifier = ">=0.24.2" },
-    { name = "tree-sitter-cpp", specifier = ">=0.23.4" },
-    { name = "tree-sitter-go", specifier = ">=0.25.0" },
-    { name = "tree-sitter-javascript", specifier = ">=0.25.0" },
-    { name = "tree-sitter-python", specifier = ">=0.25.0" },
-    { name = "tree-sitter-rust", specifier = ">=0.24.2" },
-    { name = "tree-sitter-typescript", specifier = ">=0.23.2" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "deno", specifier = ">=2.8.3" },
-    { name = "pytest", specifier = ">=8.0.0" },
-    { name = "ruff", specifier = ">=0.15.17" },
-    { name = "ty", specifier = ">=0.0.49" },
 ]
 
 [[package]]

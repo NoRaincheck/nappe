@@ -1,4 +1,4 @@
-from theseus_ship.tree import NodeInfo, ParseResult, TransformCandidate, TransformKind
+from nappe.tree import NodeInfo, ParseResult, TransformCandidate, TransformKind
 
 
 class TestNodeInfo:

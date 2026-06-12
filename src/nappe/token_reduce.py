@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Callable
 
-from theseus_ship.grammar import Grammar
-from theseus_ship.parser import parse_source
+from nappe.grammar import Grammar
+from nappe.parser import parse_source
 
 
 def _strip_trailing_whitespace(source: bytes) -> bytes | None:

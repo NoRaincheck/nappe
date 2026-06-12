@@ -1,5 +1,5 @@
 [project]
-name = "theseus-ship"
+name = "nappe"
 version = "0.1.0"
 description = "Syntax-guided program reduction (Perses algorithm)"
 readme = "README.md"
@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-theseus = "theseus_ship.cli:main"
+nappe = "nappe.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.10.9,<0.11.0"]
@@ -37,5 +37,5 @@ dev = [
 testpaths = ["tests"]
 addopts = "--ignore=tests/fixtures"
 markers = [
-    "slow: mark test as slow (skipped by default, run with THESEUS_SLOW=1)",
+    "slow: mark test as slow (skipped by default, run with NAPPE_SLOW=1)",
 ]

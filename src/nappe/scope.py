@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from theseus_ship.tree import NodeInfo
+from nappe.tree import NodeInfo
 
 
 @dataclass

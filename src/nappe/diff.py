@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import Sequence
 
-from theseus_ship.rules import FixSafety, Suggestion
+from nappe.rules import FixSafety, Suggestion
 
 
 def format_text(suggestions: Sequence[Suggestion]) -> str:

@@ -1,15 +1,15 @@
 [package]
-name = "unfluff"
+name = "nappe"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [[bin]]
-name = "unfluff"
-path = "src/bin/unfluff/main.rs"
+name = "nappe"
+path = "src/bin/nappe/main.rs"
 
 [lib]
-name = "theseus_ship"
+name = "nappe"
 path = "src/lib.rs"
 
 [dependencies]

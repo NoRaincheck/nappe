@@ -3,9 +3,9 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from theseus_ship.grammar import load_grammar
-from theseus_ship.cache import Cache
-from theseus_ship.reducer import ReduceResult, Reducer
+from nappe.grammar import load_grammar
+from nappe.cache import Cache
+from nappe.reducer import ReduceResult, Reducer
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -49,7 +49,7 @@ class TestIsInterestingCommand:
             kwargs["timeout"] = 0.01
             return original_run(*args, **kwargs)
 
-        with patch("theseus_ship.reducer.subprocess.run", side_effect=mock_run):
+        with patch("nappe.reducer.subprocess.run", side_effect=mock_run):
             assert reducer._is_interesting(b"anything") is False
 
 
@@ -141,7 +141,7 @@ class TestProgressReporting:
         grammar = load_grammar("python")
         source = b"def foo(): pass\ndef bar(): pass\n"
         reducer = Reducer(grammar, auto=True, quiet=False)
-        with patch("theseus_ship.reducer.print") as mock_print:
+        with patch("nappe.reducer.print") as mock_print:
             reducer.reduce(source)
             assert mock_print.call_count > 0
 
@@ -149,7 +149,7 @@ class TestProgressReporting:
         grammar = load_grammar("python")
         source = b"def foo(): pass\ndef bar(): pass\n"
         reducer = Reducer(grammar, auto=True, quiet=True)
-        with patch("theseus_ship.reducer.print") as mock_print:
+        with patch("nappe.reducer.print") as mock_print:
             reducer.reduce(source)
             mock_print.assert_not_called()
 
@@ -166,7 +166,7 @@ class TestAutoMode:
         reducer = Reducer(grammar, auto=True, quiet=True)
         result = reducer.reduce(source)
         assert len(result.source) <= len(source)
-        from theseus_ship.parser import parse_source
+        from nappe.parser import parse_source
 
         final = parse_source(result.source, grammar)
         assert final.error_node_count == 0
@@ -176,7 +176,7 @@ class TestAutoMode:
         source = b"def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)\n\ndef unused():\n    x = 1\n    return x\n"
         reducer = Reducer(grammar, auto=True, quiet=True)
         result = reducer.reduce(source)
-        from theseus_ship.parser import parse_source
+        from nappe.parser import parse_source
 
         final = parse_source(result.source, grammar)
         assert final.error_node_count == 0
@@ -198,7 +198,7 @@ class TestStrictMode:
             grammar, test_command="true", strict=True, quiet=True
         )
         result = reducer.reduce(source)
-        from theseus_ship.parser import parse_source
+        from nappe.parser import parse_source
 
         final = parse_source(result.source, grammar)
         assert final.error_node_count == 0
@@ -210,7 +210,7 @@ class TestStrictMode:
             grammar, test_command="true", strict=False, quiet=True
         )
         result = reducer.reduce(source)
-        from theseus_ship.parser import parse_source
+        from nappe.parser import parse_source
 
         final = parse_source(result.source, grammar)
         assert final.error_node_count > 0
@@ -244,7 +244,7 @@ class TestParallel:
         reducer = Reducer(grammar, auto=True, jobs=4, quiet=True)
         sources = [b"pass\n", b"x = 1\n"]
         with patch(
-            "theseus_ship.reducer.concurrent.futures.ProcessPoolExecutor"
+            "nappe.reducer.concurrent.futures.ProcessPoolExecutor"
         ) as mock_pool:
             mock_instance = Mock()
             mock_pool.return_value.__enter__ = Mock(return_value=mock_instance)

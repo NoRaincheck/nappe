@@ -6,9 +6,9 @@ import re
 import sys
 from pathlib import Path
 
-from theseus_ship.grammar import detect_language, load_grammar
-from theseus_ship.reducer import Reducer
-from theseus_ship.rules import FixSafety
+from nappe.grammar import detect_language, load_grammar
+from nappe.reducer import Reducer
+from nappe.rules import FixSafety
 
 
 def parse_duration(s: str) -> float:
@@ -46,7 +46,7 @@ def _add_reduce_args(parser: argparse.ArgumentParser) -> None:
 
 def _build_check_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="theseus check",
+        prog="nappe check",
         description="Analyze files and show reduction suggestions",
     )
     parser.add_argument(
@@ -89,7 +89,7 @@ def _build_check_parser() -> argparse.ArgumentParser:
 
 def _build_reduce_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="theseus reduce",
+        prog="nappe reduce",
         description="Syntax-guided program reduction (Perses algorithm)",
     )
 
@@ -123,7 +123,7 @@ def _build_reduce_parser() -> argparse.ArgumentParser:
 
 def _build_shrink_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="theseus shrink",
+        prog="nappe shrink",
         description="Shrinkray-compatible reduction (test <file>)",
     )
     parser.add_argument("test", help="Interestingness test command")
@@ -210,8 +210,8 @@ def main() -> None:
 
 
 def _run_check(args: argparse.Namespace) -> int:
-    from theseus_ship.checker import ALL_CHECKS
-    from theseus_ship.diff import apply_fixes, format_diff, format_json, format_text
+    from nappe.checker import ALL_CHECKS
+    from nappe.diff import apply_fixes, format_diff, format_json, format_text
 
     files = _expand_files(args.files if args.files else ["."])
     if not files:
@@ -277,7 +277,7 @@ def _run_check(args: argparse.Namespace) -> int:
 
 
 def _run_shrink(args: argparse.Namespace) -> int:
-    from theseus_ship.shrink import run_shrink
+    from nappe.shrink import run_shrink
 
     return run_shrink(
         test_command=args.test,
@@ -295,7 +295,7 @@ def _run_shrink(args: argparse.Namespace) -> int:
 def _run_reduce(args: argparse.Namespace) -> int:
     if not args.input:
         print(
-            "Error: input file required (or use: theseus reduce <file>)",
+            "Error: input file required (or use: nappe reduce <file>)",
             file=sys.stderr,
         )
         return 1

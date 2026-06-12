@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from theseus_ship.cli import parse_args, parse_duration, _run_reduce
+from nappe.cli import parse_args, parse_duration, _run_reduce
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -182,12 +182,12 @@ class TestRun:
 class TestCLIEntryPoint:
     def test_help_flag(self) -> None:
         result = subprocess.run(
-            [sys.executable, "-m", "theseus_ship", "--help"],
+            [sys.executable, "-m", "nappe", "--help"],
             capture_output=True,
             text=True,
         )
         assert result.returncode == 0
-        assert "theseus reduce" in result.stdout
+        assert "nappe reduce" in result.stdout
         assert "--test" in result.stdout
         assert "--test-cmd" in result.stdout
         assert "--auto" in result.stdout

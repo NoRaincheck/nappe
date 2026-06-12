@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from theseus_ship.grammar import load_grammar
-from theseus_ship.parser import parse_source
-from theseus_ship.token_reduce import (
+from nappe.grammar import load_grammar
+from nappe.parser import parse_source
+from nappe.token_reduce import (
     _remove_redundant_parens,
     _strip_trailing_newlines,
     _strip_trailing_whitespace,
@@ -100,7 +100,7 @@ class TestTokenReduce:
 
     def test_auto_reduce_pipeline(self, grammar):
         source = b"def foo(): pass\ndef bar(): pass\n\n"
-        from theseus_ship.reducer import Reducer
+        from nappe.reducer import Reducer
 
         reducer = Reducer(grammar, auto=True, quiet=True)
         result = reducer.reduce(source)

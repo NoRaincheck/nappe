@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from theseus_ship.grammar import Grammar
-from theseus_ship.parser import parse_source
-from theseus_ship.rules import RULES, Suggestion
+from nappe.grammar import Grammar
+from nappe.parser import parse_source
+from nappe.rules import RULES, Suggestion
 
 
 def check_dead_functions(
@@ -105,7 +105,7 @@ def check_unused_assignments(
 def check_constant_expressions(
     source: bytes, grammar: Grammar, file_path: str
 ) -> list[Suggestion]:
-    from theseus_ship.escapes import _safe_eval
+    from nappe.escapes import _safe_eval
 
     result = parse_source(source, grammar)
     suggestions: list[Suggestion] = []

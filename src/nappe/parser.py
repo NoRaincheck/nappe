@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from tree_sitter import Parser, Node
 
-from theseus_ship.grammar import Grammar
-from theseus_ship.tree import NodeInfo, ParseResult
+from nappe.grammar import Grammar
+from nappe.tree import NodeInfo, ParseResult
 
 
 def _count_tokens(node: Node) -> int:

@@ -1,6 +1,6 @@
 import pytest
 
-from theseus_ship.scope import ScopeData, find_dead_definitions, load_scope, unify_identifiers
+from nappe.scope import ScopeData, find_dead_definitions, load_scope, unify_identifiers
 
 
 class TestScopeStub:

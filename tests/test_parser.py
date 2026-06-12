@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from theseus_ship.grammar import load_grammar
-from theseus_ship.parser import parse_source, reparse_source, has_syntax_errors
+from nappe.grammar import load_grammar
+from nappe.parser import parse_source, reparse_source, has_syntax_errors
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
