@@ -1,0 +1,28 @@
+[project]
+name = "theseus-ship"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "NoRaincheck", email = "2498638+NoRaincheck@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "tree-sitter>=0.25.2",
+    "tree-sitter-python>=0.25.0",
+]
+
+[project.scripts]
+theseus-ship = "theseus_ship.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.10.9,<0.11.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "deno>=2.8.3",
+    "pytest>=8.0.0",
+    "ruff>=0.15.17",
+    "ty>=0.0.49",
+]
