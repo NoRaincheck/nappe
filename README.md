@@ -1,29 +1,42 @@
 # theseus-ship
 
-A pure Python implementation of the [Perses](https://doi.org/10.1145/3180155.3180236) syntax-guided test case reducer (Sun et al., ICSE 2018).
+A pure Python implementation of the
+[Perses](https://doi.org/10.1145/3180155.3180236) syntax-guided test case
+reducer (Sun et al., ICSE 2018).
 
-Reference implementation: [nnunley/bonsai](https://github.com/nnunley/bonsai) (Rust).
+Reference implementation: [nnunley/bonsai](https://github.com/nnunley/bonsai)
+(Rust).
 
 ## What It Does
 
-Given a failing test case and a program file that triggers a bug, theseus-ship reduces the file to the smallest possible program that still reproduces the failure — while guaranteeing syntactic validity at every step.
+Given a failing test case and a program file that triggers a bug, theseus-ship
+reduces the file to the smallest possible program that still reproduces the
+failure — while guaranteeing syntactic validity at every step.
 
-It also provides a `check` command for static analysis of source files, detecting reducible patterns like dead code, unused assignments, and style issues.
+It also provides a `check` command for static analysis of source files,
+detecting reducible patterns like dead code, unused assignments, and style
+issues.
 
 ## How It Works
 
-1. Parse the input file into a concrete syntax tree using [tree-sitter](https://tree-sitter.github.io/)
-2. Systematically try to remove or simplify subtrees via a priority queue (largest first)
-3. Each candidate reduction is validated by reparsing — only syntactically valid reductions proceed
-4. Test each valid candidate against an "interestingness test" (any shell command that exits 0 when the bug is still present)
+1. Parse the input file into a concrete syntax tree using
+   [tree-sitter](https://tree-sitter.github.io/)
+2. Systematically try to remove or simplify subtrees via a priority queue
+   (largest first)
+3. Each candidate reduction is validated by reparsing — only syntactically valid
+   reductions proceed
+4. Test each valid candidate against an "interestingness test" (any shell
+   command that exits 0 when the bug is still present)
 5. Repeat until no further reductions are possible
 
 ### Transforms
 
 - **Delete** — remove a node entirely
 - **Unwrap** — replace a node with one of its type-compatible children
-- **Unify identifiers** — rename bindings to canonical short forms *(planned: requires scope data)*
-- **Dead definition removal** — delete unreferenced definitions *(planned: requires scope data)*
+- **Unify identifiers** — rename bindings to canonical short forms _(planned:
+  requires scope data)_
+- **Dead definition removal** — delete unreferenced definitions _(planned:
+  requires scope data)_
 
 ### Key Properties
 
@@ -42,7 +55,8 @@ Python, JavaScript, TypeScript, Rust, Go, C, C++ (via tree-sitter grammars).
 uv sync
 ```
 
-This installs all required runtime dependencies (tree-sitter and language grammars).
+This installs all required runtime dependencies (tree-sitter and language
+grammars).
 
 ## Usage
 
@@ -89,22 +103,24 @@ uv run theseus shrink "./check.sh" input.py
 
 ### Check Rules
 
-| Code | Description | Safe? |
-|------|-------------|-------|
-| RED100 | Dead function (no callers) | unsafe |
-| RED101 | Dead class (no instantiations) | unsafe |
-| RED102 | Unused variable assignment | unsafe |
-| RED200 | Constant expression simplification | safe |
-| RED201 | Redundant parentheses | safe |
-| RED202 | Unnecessary semicolon | safe |
-| RED203 | Trailing whitespace | safe |
-| RED204 | Redundant newline | safe |
+| Code   | Description                        | Safe?  |
+| ------ | ---------------------------------- | ------ |
+| RED100 | Dead function (no callers)         | unsafe |
+| RED101 | Dead class (no instantiations)     | unsafe |
+| RED102 | Unused variable assignment         | unsafe |
+| RED200 | Constant expression simplification | safe   |
+| RED201 | Redundant parentheses              | safe   |
+| RED202 | Unnecessary semicolon              | safe   |
+| RED203 | Trailing whitespace                | safe   |
+| RED204 | Redundant newline                  | safe   |
 
 ## Example: Reducing a Bug Trigger
 
-Given a Python file that triggers a bug when `fibonacci` is called with `print()`:
+Given a Python file that triggers a bug when `fibonacci` is called with
+`print()`:
 
 **Before** (`input.py`):
+
 ```python
 import sys
 
@@ -133,6 +149,7 @@ if __name__ == "__main__":
 ```
 
 Write a pytest interestingness test (`test_interesting.py`):
+
 ```python
 import sys
 
@@ -144,11 +161,13 @@ def test_still_fails():
 ```
 
 Run the reducer:
+
 ```bash
 uv run theseus reduce --test test_interesting.py::test_still_fails input.py
 ```
 
 **After** (`input.py`):
+
 ```python
 def fibonacci(n):
     if n <= 1:
@@ -159,6 +178,7 @@ print(fibonacci(10))
 ```
 
 **Diff:**
+
 ```diff
 -import sys
 -
@@ -187,11 +207,15 @@ print(fibonacci(10))
 +print(fibonacci(10))
 ```
 
-The reducer removed the unused `import sys`, the `unused_helper` and `also_unused` functions, the `MyClass` class, and simplified the `if __name__` block — while preserving the core `fibonacci` function and the `print()` call that triggers the bug.
+The reducer removed the unused `import sys`, the `unused_helper` and
+`also_unused` functions, the `MyClass` class, and simplified the `if __name__`
+block — while preserving the core `fibonacci` function and the `print()` call
+that triggers the bug.
 
 ## Example: Checking and Fixing Code
 
 **Input** (`demo.py`):
+
 ```python
 import os
 
@@ -212,11 +236,13 @@ greet("world")
 ```
 
 Run the checker:
+
 ```bash
 uv run theseus check demo.py
 ```
 
 **Output:**
+
 ```
 demo.py:14:17: RED203 Trailing whitespace
     14 | message = "hello"   
@@ -246,11 +272,13 @@ Found 6 issues (2 safe, 4 unsafe).
 ```
 
 Apply safe fixes:
+
 ```bash
 uv run theseus check --fix demo.py
 ```
 
 **After** (`demo.py`):
+
 ```python
 import os
 
@@ -270,7 +298,8 @@ message = "hello"
 greet("world")
 ```
 
-The `--fix` flag applies only safe fixes (RED200–RED204). Use `--unsafe-fixes` to also remove dead functions, dead classes, and unused assignments.
+The `--fix` flag applies only safe fixes (RED200–RED204). Use `--unsafe-fixes`
+to also remove dead functions, dead classes, and unused assignments.
 
 ## Development
 
