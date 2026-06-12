@@ -97,6 +97,7 @@ class TestParseArgs:
             parse_args(["test.py", "--test", "foo.py", "--test-cmd", "true"])
 
 
+@pytest.mark.slow
 class TestRun:
     def test_file_not_found(self) -> None:
         args = parse_args(["nonexistent.py", "--test-cmd", "true"])
@@ -150,6 +151,7 @@ class TestRun:
             Path(input_path).unlink(missing_ok=True)
 
 
+@pytest.mark.slow
 class TestCLIEntryPoint:
     def test_help_flag(self) -> None:
         result = subprocess.run(

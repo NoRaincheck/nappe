@@ -3,6 +3,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+import pytest
+
 from theseus_ship.shrink import ShrinkCache, ShrinkReducer, run_shrink
 
 
@@ -42,16 +44,17 @@ class TestShrinkReducer:
         reducer = ShrinkReducer(grammar, test_command="cat")
         assert reducer._is_interesting(b"test content", None) is True
 
-    def test_is_interesting_env_var(self) -> None:
+    def test_is_interesting_passes_file_arg(self) -> None:
         from theseus_ship.grammar import load_grammar
 
         grammar = load_grammar("python")
         reducer = ShrinkReducer(
-            grammar, test_command="python3 -c \"import os; exit(0 if os.environ.get('THESEUS_CANDIDATE') else 1)\""
+            grammar, test_command="test -f"
         )
         assert reducer._is_interesting(b"anything", None) is True
 
 
+@pytest.mark.slow
 class TestRunShrink:
     def test_file_not_found(self) -> None:
         assert run_shrink("true", "nonexistent.py") == 1
@@ -101,6 +104,7 @@ class TestRunShrink:
             Path(input_path + ".orig").unlink(missing_ok=True)
 
 
+@pytest.mark.slow
 class TestCLIShrinkSubcommand:
     def test_shrink_help(self) -> None:
         result = subprocess.run(

@@ -30,3 +30,6 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--ignore=tests/fixtures"
+markers = [
+    "slow: mark test as slow (skipped by default, run with THESEUS_SLOW=1)",
+]

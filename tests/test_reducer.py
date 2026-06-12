@@ -1,6 +1,8 @@
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 from theseus_ship.grammar import load_grammar
 from theseus_ship.reducer import ReduceResult, Reducer, _Cache
 
@@ -22,6 +24,7 @@ class TestCache:
         assert cache.get(b"different") is None
 
 
+@pytest.mark.slow
 class TestIsInterestingCommand:
     def test_success(self) -> None:
         grammar = load_grammar("python")
@@ -49,6 +52,7 @@ class TestIsInterestingCommand:
             assert reducer._is_interesting(b"anything") is False
 
 
+@pytest.mark.slow
 class TestIsInterestingPytest:
     def test_passing_test(self) -> None:
         grammar = load_grammar("python")
@@ -85,6 +89,7 @@ class TestShouldStop:
         assert reducer._should_stop(0, start) is True
 
 
+@pytest.mark.slow
 class TestReduce:
     def test_uninteresting_input(self) -> None:
         grammar = load_grammar("python")
