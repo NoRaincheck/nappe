@@ -1,11 +1,11 @@
-# Program Reduction: A Survey and Assessment of theseus-ship
+# Program Reduction: A Survey and Assessment of unfluff
 
 ## Abstract
 
 Program reduction — the automatic minimization of a failing test case to the
 smallest input that preserves the failure — is a critical tool in software
 debugging, compiler testing, and fuzzing. This paper surveys the landscape of
-program reduction tools and techniques, situates **theseus-ship** (a pure Python
+program reduction tools and techniques, situates **unfluff** (a pure Python
 implementation of the Perses algorithm) within that landscape, evaluates its
 novelty and gaps, and proposes concrete improvements for speed and alignment
 with state-of-the-art goals.
@@ -133,9 +133,9 @@ AST level. Exploits the observation that many reductions are "horizontal"
 
 ---
 
-## 3. What is theseus-ship?
+## 3. What is unfluff?
 
-**theseus-ship** is a pure Python implementation of the Perses algorithm, based
+**unfluff** is a pure Python implementation of the Perses algorithm, based
 on the Rust reference implementation bonsai. It is at version 0.1.0 and
 implements:
 
@@ -155,9 +155,9 @@ implements:
 | Language support                      | Python only (extensible architecture)                  |
 | Shrinkray compatibility               | Implemented                                            |
 
-### 3.1 What is novel about theseus-ship?
+### 3.1 What is novel about unfluff?
 
-**Short answer: the algorithm is not novel.** theseus-ship is a faithful
+**Short answer: the algorithm is not novel.** unfluff is a faithful
 reimplementation of Perses. However, several design choices are distinctive:
 
 1. **Pure Python with minimal dependencies.** Only `tree-sitter` and
@@ -198,7 +198,7 @@ components:
 | **Kleene-star dispatch**              | Statement lists, argument lists, import lists, etc. are not recognized as Kleene containers. The reducer must try to delete each child individually rather than using ddmin's logarithmic strategy. |
 | **Grammar-based node classification** | Without PNF, the reducer cannot distinguish between nodes that can be deleted (Kleene children), nodes that can be unwrapped (regular rules), and nodes that need special treatment.                |
 
-**Consequence:** theseus-ship will be significantly slower and produce larger
+**Consequence:** unfluff will be significantly slower and produce larger
 results than a full Perses implementation on programs with many list-like
 constructs (which is most real code).
 
@@ -215,7 +215,7 @@ constructs (which is most real code).
 
 ### 4.3 Feature Gaps (vs. State of the Art)
 
-| Feature                                                                      | Present in                                                                    | Missing from theseus-ship |
+| Feature                                                                      | Present in                                                                    | Missing from unfluff |
 | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------- |
 | **Scope-aware transforms** (identifier unification, dead definition removal) | bonsai                                                                        | Stub only                 |
 | **Multi-language support**                                                   | C-Reduce (C/C++), Shrinkray (C, Python, JSON, CNF), bonsai (Python, JS, Rust) | Python only               |
@@ -280,7 +280,7 @@ constructs (which is most real code).
 11. **Implement PNF normalization.** This is the core of Perses's theoretical
     contribution. It would require parsing tree-sitter's grammar definitions and
     applying Algorithms 1–4 from the paper. This is significant work but would
-    bring theseus-ship to full Perses parity.
+    bring unfluff to full Perses parity.
 
 12. **Implement Vulcan-style escape transforms.** Escaping 1-minimality requires
     mutations that are not strictly "smaller" but enable further reduction
@@ -292,7 +292,7 @@ constructs (which is most real code).
     (e.g., removing unused import names, shortening identifiers).
 
 14. **Add a Shrinkray backend mode.** Instead of the current `shrink` subcommand
-    that reimplements the reducer, implement theseus-ship as a Shrinkray
+    that reimplements the reducer, implement unfluff as a Shrinkray
     plugin/format handler. This would give it access to Shrinkray's parallelism
     and UI for free.
 
@@ -327,7 +327,7 @@ constructs (which is most real code).
 | **Shrinkray**    | Multiformat            | Generic + format passes     | None             | Yes           | 1-minimal                   | Python 3.12+      |
 | **Perses**       | Any (grammar-required) | Priority queue + BoundedBFS | Yes (every step) | No            | 1-tree-minimal              | Grammar, parser   |
 | **bonsai**       | Python, JS, Rust       | Perses via tree-sitter      | Yes (every step) | Yes           | 1-tree-minimal              | tree-sitter       |
-| **theseus-ship** | Python                 | Simplified Perses           | Yes (every step) | No            | 1-tree-minimal (simplified) | tree-sitter       |
+| **unfluff** | Python                 | Simplified Perses           | Yes (every step) | No            | 1-tree-minimal (simplified) | tree-sitter       |
 | **Vulcan**       | Any (grammar-required) | Perses + escape transforms  | Yes (every step) | No            | Beyond 1-tree-minimal       | Grammar, parser   |
 | **T-Rec**        | Any                    | Token-level Perses          | Yes (every step) | No            | Beyond 1-tree-minimal       | Tokenizer, parser |
 
@@ -335,7 +335,7 @@ constructs (which is most real code).
 
 ## 7. Conclusion
 
-**theseus-ship occupies a specific niche:** it is the most accessible Python
+**unfluff occupies a specific niche:** it is the most accessible Python
 implementation of syntax-guided reduction, with a clean codebase, minimal
 dependencies, and Python-native interestingness testing. It is not novel as an
 algorithm — it is a faithful (if simplified) reimplementation of Perses — but
@@ -350,7 +350,7 @@ The most impactful improvements, in priority order:
 4. **Parallel testing** (near-linear speedup with CPU-bound tests)
 5. **Multi-language support** (leverage tree-sitter's 300+ grammars)
 
-With these changes, theseus-ship could become the go-to Python-native program
+With these changes, unfluff could become the go-to Python-native program
 reducer — combining Perses's theoretical guarantees with Python's accessibility
 and tree-sitter's language coverage.
 

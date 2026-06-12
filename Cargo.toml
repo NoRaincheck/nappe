@@ -1,12 +1,12 @@
 [package]
-name = "theseus-ship"
+name = "unfluff"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
 
 [[bin]]
-name = "theseus-ship"
-path = "src/bin/theseus-ship/main.rs"
+name = "unfluff"
+path = "src/bin/unfluff/main.rs"
 
 [lib]
 name = "theseus_ship"

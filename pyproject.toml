@@ -20,7 +20,6 @@ dependencies = [
 
 [project.scripts]
 theseus = "theseus_ship.cli:main"
-theseus-ship = "theseus_ship.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.10.9,<0.11.0"]

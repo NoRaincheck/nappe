@@ -11,7 +11,7 @@ use theseus_ship::shrink::run_shrink;
 
 #[derive(Parser)]
 #[command(
-    name = "theseus-ship",
+    name = "unfluff",
     version,
     about = "Syntax-guided program reduction (Perses algorithm)"
 )]
@@ -279,7 +279,7 @@ fn main() {
             let input = match input {
                 Some(i) => i,
                 None => {
-                    eprintln!("Error: input file required (or use: theseus-ship reduce <file>)");
+                    eprintln!("Error: input file required (or use: unfluff reduce <file>)");
                     process::exit(1);
                 }
             };

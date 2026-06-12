@@ -1,12 +1,12 @@
-# theseus-ship - Agent Instructions
+# unfluff - Agent Instructions
 
 ## Project Overview
 
-theseus-ship is a syntax-guided test case reducer implementing the Perses
+unfluff is a syntax-guided test case reducer implementing the Perses
 algorithm, based on the Rust reference implementation
 [bonsai](https://github.com/nnunley/bonsai).
 
-Given a failing test case and a program file that triggers a bug, theseus-ship
+Given a failing test case and a program file that triggers a bug, unfluff
 reduces the file to the smallest possible program that still reproduces the
 failure — while guaranteeing syntactic validity at every step.
 
@@ -18,7 +18,7 @@ The Rust implementation lives in `src/` and is built with `cargo`.
 
 ```
 src/
-├── bin/theseus-ship/main.rs — CLI entry point
+├── bin/unfluff/main.rs — CLI entry point
 ├── lib.rs                   — library root
 ├── cache.rs                 — content-hash caching
 ├── checker.rs               — static analysis checks

@@ -187,7 +187,7 @@ class TestCLIEntryPoint:
             text=True,
         )
         assert result.returncode == 0
-        assert "theseus-ship" in result.stdout
+        assert "theseus reduce" in result.stdout
         assert "--test" in result.stdout
         assert "--test-cmd" in result.stdout
         assert "--auto" in result.stdout

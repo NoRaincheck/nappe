@@ -1,6 +1,6 @@
 # Benchmarks
 
-Comparison of the Python and Rust implementations of theseus-ship.
+Comparison of the Python and Rust implementations of unfluff.
 
 ## Auto-reduce mode (`--auto`)
 

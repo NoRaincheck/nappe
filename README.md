@@ -1,4 +1,4 @@
-# theseus-ship
+# unfluff
 
 A syntax-guided test case reducer implementing the
 [Perses](https://doi.org/10.1145/3180155.3180236) algorithm (Sun et al., ICSE 2018).
@@ -8,7 +8,7 @@ Reference implementation: [nnunley/bonsai](https://github.com/nnunley/bonsai)
 
 ## What It Does
 
-Given a failing test case and a program file that triggers a bug, theseus-ship
+Given a failing test case and a program file that triggers a bug, unfluff
 reduces the file to the smallest possible program that still reproduces the
 failure — while guaranteeing syntactic validity at every step.
 
@@ -70,7 +70,7 @@ with the Python reference.
 
 ```bash
 cargo build --release
-cp target/release/theseus-ship ~/.local/bin/
+cp target/release/unfluff ~/.local/bin/
 ```
 
 ### Python (reference)
@@ -81,48 +81,48 @@ uv sync
 
 ## Usage
 
-### `theseus reduce` — Syntax-guided reduction (default)
+### `unfluff reduce` — Syntax-guided reduction (default)
 
 ```bash
 # Reduce using a pytest interestingness test (recommended)
-theseus-ship reduce --test test_interesting.py::test_still_fails input.py
+unfluff reduce --test test_interesting.py::test_still_fails input.py
 
 # Reduce using a shell command
-theseus-ship reduce --test-cmd "grep -q 'error'" input.py
+unfluff reduce --test-cmd "grep -q 'error'" input.py
 
 # Auto-reduce to smallest valid program (no test needed)
-theseus-ship reduce --auto input.py
+unfluff reduce --auto input.py
 
 # Limit reduction time
-theseus-ship reduce --test test_interesting.py --max-time 30m --max-tests 1000 input.py
+unfluff reduce --test test_interesting.py --max-time 30m --max-tests 1000 input.py
 
 # Use Python implementation (legacy)
-theseus-ship --legacy reduce --test test_interesting.py::test_still_fails input.py
+unfluff --legacy reduce --test test_interesting.py::test_still_fails input.py
 ```
 
-### `theseus check` — Static analysis and fixes
+### `unfluff check` — Static analysis and fixes
 
 ```bash
 # Check files for reducible patterns
-theseus-ship check src/**/*.py
+unfluff check src/**/*.py
 
 # Apply safe fixes automatically
-theseus-ship check --fix src/**/*.py
+unfluff check --fix src/**/*.py
 
 # Apply all fixes (including unsafe ones like dead code removal)
-theseus-ship check --unsafe-fixes src/**/*.py
+unfluff check --unsafe-fixes src/**/*.py
 
 # Output as JSON
-theseus-ship check --output-format json src/**/*.py
+unfluff check --output-format json src/**/*.py
 
 # Filter by rule
-theseus-ship check --select RED200,RED201 src/**/*.py
+unfluff check --select RED200,RED201 src/**/*.py
 ```
 
-### `theseus shrink` — Shrinkray-compatible interface
+### `unfluff shrink` — Shrinkray-compatible interface
 
 ```bash
-theseus-ship shrink "./check.sh" input.py
+unfluff shrink "./check.sh" input.py
 ```
 
 ### Check Rules
@@ -187,7 +187,7 @@ def test_still_fails():
 Run the reducer:
 
 ```bash
-theseus-ship reduce --test test_interesting.py::test_still_fails input.py
+unfluff reduce --test test_interesting.py::test_still_fails input.py
 ```
 
 **After** (`input.py`):
@@ -262,7 +262,7 @@ greet("world")
 Run the checker:
 
 ```bash
-theseus-ship check demo.py
+unfluff check demo.py
 ```
 
 **Output:**
@@ -298,7 +298,7 @@ Found 6 issues (2 safe, 4 unsafe).
 Apply safe fixes:
 
 ```bash
-theseus-ship check --fix demo.py
+unfluff check --fix demo.py
 ```
 
 **After** (`demo.py`):
