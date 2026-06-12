@@ -348,3 +348,7 @@ uv run pytest tests/                    # test
 ## License
 
 MIT
+
+## References
+
+- [Syntax-Guided Program Reduction: A Survey and the unfluff Implementation](ref/syntax-guided-program-reduction-survey.pdf) — Review paper covering the Perses algorithm, related work, and the unfluff system.
