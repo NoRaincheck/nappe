@@ -87,8 +87,10 @@ class TestParseArgs:
         assert args.quiet is False
 
     def test_missing_test(self) -> None:
-        with pytest.raises(SystemExit):
-            parse_args(["test.py"])
+        args = parse_args(["test.py"])
+        assert args.input == "test.py"
+        assert args.test is None
+        assert args.test_cmd is None
 
     def test_mutually_exclusive(self) -> None:
         with pytest.raises(SystemExit):

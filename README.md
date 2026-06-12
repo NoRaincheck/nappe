@@ -48,6 +48,9 @@ uv run theseus-ship --test test_interesting.py::test_still_fails input.py
 # Reduce using a shell command (backward compatible)
 uv run theseus-ship --test-cmd "grep -q 'error'" input.py
 
+# Shrinkray-compatible interface (test <file>)
+uv run theseus-ship shrink "./check.sh" input.py
+
 # Limit reduction time
 uv run theseus-ship --test test_interesting.py --max-time 30m --max-tests 1000 input.py
 ```

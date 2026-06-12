@@ -18,23 +18,15 @@ def parse_duration(s: str) -> float:
     return value * {"s": 1, "m": 60, "h": 3600}[unit]
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        prog="theseus-ship",
-        description="Syntax-guided program reduction (Perses algorithm)",
-    )
-    parser.add_argument("input", help="Source file to reduce")
+def _format_time(seconds: float) -> str:
+    if seconds < 60:
+        return f"{seconds:.1f}s"
+    minutes = int(seconds // 60)
+    secs = int(seconds % 60)
+    return f"{minutes}m {secs}s"
 
-    test_group = parser.add_mutually_exclusive_group(required=True)
-    test_group.add_argument(
-        "--test",
-        help="Pytest test specification (e.g. test_file.py::test_name)",
-    )
-    test_group.add_argument(
-        "--test-cmd",
-        help="Shell command (exit 0 = interesting, receives source on stdin)",
-    )
 
+def _add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--lang", help="Override language detection")
     parser.add_argument(
         "-o", "--output", help="Output file path (default: overwrite input)"
@@ -48,23 +40,111 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output")
-    return parser.parse_args(argv)
 
 
-def _format_time(seconds: float) -> str:
-    if seconds < 60:
-        return f"{seconds:.1f}s"
-    minutes = int(seconds // 60)
-    secs = int(seconds % 60)
-    return f"{minutes}m {secs}s"
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="theseus-ship",
+        description="Syntax-guided program reduction (Perses algorithm)",
+    )
+
+    test_group = parser.add_mutually_exclusive_group(required=False)
+    test_group.add_argument(
+        "--test",
+        help="Pytest test specification (e.g. test_file.py::test_name)",
+    )
+    test_group.add_argument(
+        "--test-cmd",
+        help="Shell command (exit 0 = interesting, receives source on stdin)",
+    )
+
+    parser.add_argument("input", nargs="?", help="Source file to reduce")
+    _add_common_args(parser)
+
+    return parser
+
+
+def _build_shrink_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="theseus-ship shrink",
+        description="Shrinkray-compatible reduction (test <file>)",
+    )
+    parser.add_argument("test", help="Interestingness test command")
+    parser.add_argument("file", help="Source file to reduce")
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=60.0,
+        help="Per-test timeout in seconds (default: 60)",
+    )
+    parser.add_argument(
+        "--backup",
+        default="",
+        help="Backup file suffix (default: .bak)",
+    )
+    parser.add_argument(
+        "--parallelism",
+        type=int,
+        default=1,
+        help="Number of parallel test workers",
+    )
+    _add_common_args(parser)
+
+    return parser
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    if argv is None:
+        argv = sys.argv[1:]
+
+    if argv and argv[0] == "shrink":
+        parser = _build_shrink_parser()
+        args = parser.parse_args(argv[1:])
+        args.command = "shrink"
+        return args
+
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+    args.command = None
+    return args
 
 
 def main() -> None:
     args = parse_args()
-    sys.exit(_run(args))
+    if args.command == "shrink":
+        sys.exit(_run_shrink(args))
+    else:
+        sys.exit(_run(args))
+
+
+def _run_shrink(args: argparse.Namespace) -> int:
+    from theseus_ship.shrink import run_shrink
+
+    return run_shrink(
+        test_command=args.test,
+        filename=args.file,
+        timeout=args.timeout,
+        max_time=args.max_time,
+        max_tests=args.max_tests,
+        parallelism=args.parallelism,
+        backup=args.backup,
+        verbose=args.verbose,
+        quiet=args.quiet,
+    )
 
 
 def _run(args: argparse.Namespace) -> int:
+    if not args.input:
+        print(
+            "Error: input file required (or use: theseus-ship shrink <test> <file>)",
+            file=sys.stderr,
+        )
+        return 1
+
+    if not args.test and not args.test_cmd:
+        print("Error: --test or --test-cmd required", file=sys.stderr)
+        return 1
+
     input_path = Path(args.input)
     if not input_path.exists():
         print(f"Error: file not found: {input_path}", file=sys.stderr)
