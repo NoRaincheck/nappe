@@ -2,8 +2,8 @@
 
 ## Project Overview
 
-theseus-ship is a pure Python implementation of the Perses syntax-guided test
-case reducer, based on the Rust reference implementation
+theseus-ship is a syntax-guided test case reducer implementing the Perses
+algorithm, based on the Rust reference implementation
 [bonsai](https://github.com/nnunley/bonsai).
 
 Given a failing test case and a program file that triggers a bug, theseus-ship
@@ -12,8 +12,37 @@ failure — while guaranteeing syntactic validity at every step.
 
 ## Architecture
 
-The project lives in `src/theseus_ship/` and is structured as a Python package
-using `uv` as the package manager.
+### Rust (primary)
+
+The Rust implementation lives in `src/` and is built with `cargo`.
+
+```
+src/
+├── bin/theseus-ship/main.rs — CLI entry point
+├── lib.rs                   — library root
+├── cache.rs                 — content-hash caching
+├── checker.rs               — static analysis checks
+├── diff.rs                  — diff/fix application
+├── escapes.rs               — string escape handling
+├── grammar.rs               — tree-sitter language loading
+├── parser.rs                — source parsing, CST walk
+├── reducer.rs               — priority queue reduction loop
+├── rules.rs                 — check rule definitions
+├── shrink.rs                — shrinkray-compatible interface
+├── token_reduce.rs          — token-level reduction
+├── transforms.rs            — Delete/Unwrap transforms
+├── tree.rs                  — data types
+└── util.rs                  — utilities
+```
+
+**Data flow:** file → parse → CST → generate candidates → apply transform →
+reparse+validate → interestingness test → accept/reject → loop
+
+### Python (reference)
+
+The Python implementation lives in `src/theseus_ship/` and is kept for
+comparison and as a reference for the algorithm. Accessible via the `--legacy`
+flag.
 
 ```
 src/theseus_ship/
@@ -26,12 +55,29 @@ src/theseus_ship/
 └── scope.py      — stub for scope-aware transforms (Phase 5)
 ```
 
-**Data flow:** file → parse → ParseResult → generate candidates → apply
-transform → reparse+validate → interestingness test → accept/reject → loop
-
 ## Dependencies
 
-The only runtime dependencies are:
+### Rust
+
+Runtime dependencies in `Cargo.toml`:
+
+```toml
+tree-sitter = "0.25"
+tree-sitter-language = "0.1"
+tree-sitter-python = "0.25"
+tree-sitter-javascript = "0.25"
+tree-sitter-typescript = "0.23"
+tree-sitter-rust = "0.24"
+tree-sitter-go = "0.25"
+tree-sitter-c = "0.24"
+tree-sitter-cpp = "0.23"
+clap = { version = "4", features = ["derive"] }
+blake3 = "1"
+tempfile = "3"
+glob = "0.3"
+```
+
+### Python (reference)
 
 ```bash
 uv add tree-sitter tree-sitter-python
@@ -43,62 +89,61 @@ you believe another package is necessary, discuss it first.
 
 ## Development Workflow
 
-### Lint & Format
+### Rust (primary)
 
 ```bash
-uv run ruff check src/
-uv run ruff format src/
+cargo build --release      # build
+cargo test                 # test
+cargo clippy               # lint
+cargo fmt                  # format
 ```
 
-### Type Checking
+### Python (reference)
 
 ```bash
-uv run ty check src/
-```
-
-### Run All Tests
-
-```bash
+uv run ruff check src/theseus_ship/
+uv run ruff format src/theseus_ship/
+uv run ty check src/theseus_ship/
 uv run pytest tests/
 ```
 
 ### Run the CLI
 
 ```bash
-uv run theseus-ship --test test_interesting.py::test_still_fails input.py
+# Rust (default)
+cargo run -- reduce --test test_interesting.py::test_still_fails input.py
+
+# Python (legacy)
+cargo run -- --legacy reduce --test test_interesting.py::test_still_fails input.py
 ```
 
 ## Key Design Decisions
 
-1. **Reparse is the definitive validity gate.** Always reparse after every
+1. **Rust is the primary implementation.** All new features and optimizations
+   should target Rust first. Python is maintained for reference only.
+2. **Reparse is the definitive validity gate.** Always reparse after every
    candidate transformation and reject any result with new ERROR/MISSING nodes.
-2. **Priority queue stores byte ranges, not node handles.** Node handles
+3. **Priority queue stores byte ranges, not node handles.** Node handles
    invalidate after reparse — use (byte_range, kind_id, token_count) tuples.
-3. **Cache test results.** Hash the file content to avoid re-running the
+4. **Cache test results.** Hash the file content to avoid re-running the
    interestingness test on identical inputs.
-4. **No shell interpolation.** Use `subprocess.run` with list arguments, never
-   `shell=True`.
+5. **No shell interpolation.** Use `subprocess.run` with list arguments, never
+   `shell=True` (Python reference).
 
 ## Style Guide
 
-### Linting & Formatting
+### Rust
 
-- Use **ruff** for all linting and formatting. Run `uv run ruff check src/` and
-  `uv run ruff format src/` before committing.
+- Use `cargo fmt` for formatting
+- Use `cargo clippy` for linting
+- Follow standard Rust conventions (snake_case, camelCase for types)
 
-### Package Structure
+### Python (reference)
 
-- Keep `__init__.py` files **empty** — no imports, no code.
-
-### Testing
-
-- Add tests for all new functionality. Tests live in `tests/` and mirror the
-  source structure.
-
-### Typing
-
-- Ensure code passes `uv run ty check src/` with no errors. Use type annotations
-  for all public functions.
+- Use **ruff** for all linting and formatting
+- Keep `__init__.py` files **empty** — no imports, no code
+- Type annotations on all public functions
+- Tests in `tests/` mirror source structure
 
 ## Conventions & Patterns
 

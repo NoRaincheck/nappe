@@ -1,3 +1,4 @@
+use std::env;
 use std::fs;
 use std::path::PathBuf;
 use std::process;
@@ -15,6 +16,10 @@ use theseus_ship::shrink::run_shrink;
     about = "Syntax-guided program reduction (Perses algorithm)"
 )]
 struct Cli {
+    /// Use the Python implementation instead of Rust
+    #[arg(long, global = true)]
+    legacy: bool,
+
     #[command(subcommand)]
     command: Option<Commands>,
 
@@ -216,6 +221,22 @@ fn expand_files(patterns: &[String]) -> Vec<PathBuf> {
 
 fn main() {
     let cli = Cli::parse();
+
+    if cli.legacy {
+        let mut cmd = process::Command::new("uv");
+        cmd.arg("run").arg("theseus");
+        for arg in env::args().skip(1) {
+            if arg == "--legacy" {
+                continue;
+            }
+            cmd.arg(arg);
+        }
+        let status = cmd.status().unwrap_or_else(|e| {
+            eprintln!("Error: failed to run Python implementation: {}", e);
+            process::exit(1);
+        });
+        process::exit(status.code().unwrap_or(1));
+    }
 
     let exit_code = match cli.command {
         Some(Commands::Reduce { .. }) | None => {

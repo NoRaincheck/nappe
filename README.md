@@ -1,8 +1,7 @@
 # theseus-ship
 
-A pure Python implementation of the
-[Perses](https://doi.org/10.1145/3180155.3180236) syntax-guided test case
-reducer (Sun et al., ICSE 2018).
+A syntax-guided test case reducer implementing the
+[Perses](https://doi.org/10.1145/3180155.3180236) algorithm (Sun et al., ICSE 2018).
 
 Reference implementation: [nnunley/bonsai](https://github.com/nnunley/bonsai)
 (Rust).
@@ -49,14 +48,36 @@ issues.
 
 Python, JavaScript, TypeScript, Rust, Go, C, C++ (via tree-sitter grammars).
 
+## Implementation
+
+The project has two implementations:
+
+- **Rust** (primary) — native implementation in `src/`, built with `cargo`. This
+  is the default and recommended implementation.
+- **Python** (reference) — pure Python implementation in `src/theseus_ship/`,
+  kept for comparison and as a reference for the algorithm. Accessible via the
+  `--legacy` flag.
+
+### Why Rust?
+
+The Rust implementation provides significantly better performance for large
+files and complex reduction scenarios, while maintaining full feature parity
+with the Python reference.
+
 ## Installation
+
+### Rust (recommended)
+
+```bash
+cargo build --release
+cp target/release/theseus-ship ~/.local/bin/
+```
+
+### Python (reference)
 
 ```bash
 uv sync
 ```
-
-This installs all required runtime dependencies (tree-sitter and language
-grammars).
 
 ## Usage
 
@@ -64,41 +85,44 @@ grammars).
 
 ```bash
 # Reduce using a pytest interestingness test (recommended)
-uv run theseus reduce --test test_interesting.py::test_still_fails input.py
+theseus-ship reduce --test test_interesting.py::test_still_fails input.py
 
 # Reduce using a shell command
-uv run theseus reduce --test-cmd "grep -q 'error'" input.py
+theseus-ship reduce --test-cmd "grep -q 'error'" input.py
 
 # Auto-reduce to smallest valid program (no test needed)
-uv run theseus reduce --auto input.py
+theseus-ship reduce --auto input.py
 
 # Limit reduction time
-uv run theseus reduce --test test_interesting.py --max-time 30m --max-tests 1000 input.py
+theseus-ship reduce --test test_interesting.py --max-time 30m --max-tests 1000 input.py
+
+# Use Python implementation (legacy)
+theseus-ship --legacy reduce --test test_interesting.py::test_still_fails input.py
 ```
 
 ### `theseus check` — Static analysis and fixes
 
 ```bash
 # Check files for reducible patterns
-uv run theseus check src/**/*.py
+theseus-ship check src/**/*.py
 
 # Apply safe fixes automatically
-uv run theseus check --fix src/**/*.py
+theseus-ship check --fix src/**/*.py
 
 # Apply all fixes (including unsafe ones like dead code removal)
-uv run theseus check --unsafe-fixes src/**/*.py
+theseus-ship check --unsafe-fixes src/**/*.py
 
 # Output as JSON
-uv run theseus check --output-format json src/**/*.py
+theseus-ship check --output-format json src/**/*.py
 
 # Filter by rule
-uv run theseus check --select RED200,RED201 src/**/*.py
+theseus-ship check --select RED200,RED201 src/**/*.py
 ```
 
 ### `theseus shrink` — Shrinkray-compatible interface
 
 ```bash
-uv run theseus shrink "./check.sh" input.py
+theseus-ship shrink "./check.sh" input.py
 ```
 
 ### Check Rules
@@ -163,7 +187,7 @@ def test_still_fails():
 Run the reducer:
 
 ```bash
-uv run theseus reduce --test test_interesting.py::test_still_fails input.py
+theseus-ship reduce --test test_interesting.py::test_still_fails input.py
 ```
 
 **After** (`input.py`):
@@ -186,7 +210,7 @@ print(fibonacci(10))
      if n <= 1:
          return n
      return fibonacci(n - 1) + fibonacci(n - 2)
- 
+
 -def unused_helper(x):
 -    return x * 2
 -
@@ -238,7 +262,7 @@ greet("world")
 Run the checker:
 
 ```bash
-uv run theseus check demo.py
+theseus-ship check demo.py
 ```
 
 **Output:**
@@ -274,7 +298,7 @@ Found 6 issues (2 safe, 4 unsafe).
 Apply safe fixes:
 
 ```bash
-uv run theseus check --fix demo.py
+theseus-ship check --fix demo.py
 ```
 
 **After** (`demo.py`):
@@ -303,11 +327,22 @@ to also remove dead functions, dead classes, and unused assignments.
 
 ## Development
 
+### Rust (primary)
+
 ```bash
-uv run ruff check src/     # lint
-uv run ruff format src/    # format
-uv run ty check src/       # type check
-uv run pytest tests/       # test
+cargo build --release      # build
+cargo test                 # test
+cargo clippy               # lint
+cargo fmt                  # format
+```
+
+### Python (reference)
+
+```bash
+uv run ruff check src/theseus_ship/     # lint
+uv run ruff format src/theseus_ship/    # format
+uv run ty check src/theseus_ship/       # type check
+uv run pytest tests/                    # test
 ```
 
 ## License
