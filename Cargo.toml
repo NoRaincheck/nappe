@@ -1,0 +1,28 @@
+[package]
+name = "theseus-ship"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[[bin]]
+name = "theseus-ship"
+path = "src/bin/theseus-ship/main.rs"
+
+[lib]
+name = "theseus_ship"
+path = "src/lib.rs"
+
+[dependencies]
+tree-sitter = "0.25"
+tree-sitter-language = "0.1"
+tree-sitter-python = "0.25"
+tree-sitter-javascript = "0.25"
+tree-sitter-typescript = "0.23"
+tree-sitter-rust = "0.24"
+tree-sitter-go = "0.25"
+tree-sitter-c = "0.24"
+tree-sitter-cpp = "0.23"
+clap = { version = "4", features = ["derive"] }
+blake3 = "1"
+tempfile = "3"
+glob = "0.3"

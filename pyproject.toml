@@ -1,7 +1,7 @@
 [project]
 name = "theseus-ship"
 version = "0.1.0"
-description = "Add your description here"
+description = "Syntax-guided program reduction (Perses algorithm)"
 readme = "README.md"
 authors = [
     { name = "NoRaincheck", email = "2498638+NoRaincheck@users.noreply.github.com" }
