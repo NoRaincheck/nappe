@@ -63,6 +63,13 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Reduce to smallest syntactically valid program (no test needed)",
     )
 
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        default=False,
+        help="Reject any parse errors, including pre-existing ones",
+    )
+
     parser.add_argument("input", nargs="?", help="Source file to reduce")
     _add_common_args(parser)
 
@@ -176,6 +183,7 @@ def _run(args: argparse.Namespace) -> int:
         jobs=args.jobs,
         verbose=args.verbose,
         quiet=args.quiet,
+        strict=args.strict,
     )
 
     original_size = len(source)
