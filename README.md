@@ -89,11 +89,11 @@ if __name__ == "__main__":
 
 Write a pytest interestingness test (`test_interesting.py`):
 ```python
-import os
+import sys
 
 def test_still_fails():
     """Exit 0 = candidate is still interesting (bug still present)."""
-    candidate = os.environ["THESEUS_CANDIDATE"]
+    candidate = sys.argv[1]
     content = open(candidate).read()
     assert "def fibonacci" in content and "print(" in content
 ```

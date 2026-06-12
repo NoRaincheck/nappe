@@ -137,15 +137,11 @@ class ShrinkReducer:
         try:
             cmd_parts = shlex.split(self._test_command)
 
-            env = os.environ.copy()
-            env["THESEUS_CANDIDATE"] = temp_path
-
             proc = subprocess.run(
-                cmd_parts,
+                cmd_parts + [temp_path],
                 input=source,
                 capture_output=True,
                 timeout=self._timeout,
-                env=env,
             )
             is_interesting = proc.returncode == 0
         except subprocess.TimeoutExpired:

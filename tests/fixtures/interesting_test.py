@@ -1,7 +1,7 @@
-import os
+import sys
 
 
 def test_still_fails():
-    candidate = os.environ["THESEUS_CANDIDATE"]
+    candidate = sys.argv[1]
     content = open(candidate).read()
     assert "def fibonacci" in content

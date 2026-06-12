@@ -81,6 +81,9 @@ def apply_transform(
     else:
         return None
 
+    if new_source == source:
+        return None
+
     if not new_source.strip():
         return None
 

@@ -130,13 +130,12 @@ class Reducer:
             temp_path = f.name
 
         try:
-            env = os.environ.copy()
-            env["THESEUS_CANDIDATE"] = temp_path
             result = subprocess.run(
                 [
                     sys.executable,
                     "-m",
                     "pytest",
+                    temp_path,
                     self._test_spec,
                     "-x",
                     "--tb=no",
@@ -144,7 +143,6 @@ class Reducer:
                 ],
                 capture_output=True,
                 timeout=60,
-                env=env,
             )
             return result.returncode == 0
         except subprocess.TimeoutExpired:
