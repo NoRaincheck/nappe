@@ -57,7 +57,7 @@ uv run pytest tests/
 ### Run the CLI
 
 ```bash
-uv run theseus-ship --test "grep -q 'pattern'" input.py
+uv run theseus-ship --test test_interesting.py::test_still_fails input.py
 ```
 
 ## Key Design Decisions

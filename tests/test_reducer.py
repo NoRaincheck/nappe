@@ -22,20 +22,20 @@ class TestCache:
         assert cache.get(b"different") is None
 
 
-class TestIsInteresting:
+class TestIsInterestingCommand:
     def test_success(self) -> None:
         grammar = load_grammar("python")
-        reducer = Reducer(grammar, "true")
+        reducer = Reducer(grammar, test_command="true")
         assert reducer._is_interesting(b"anything") is True
 
     def test_failure(self) -> None:
         grammar = load_grammar("python")
-        reducer = Reducer(grammar, "false")
+        reducer = Reducer(grammar, test_command="false")
         assert reducer._is_interesting(b"anything") is False
 
     def test_timeout(self) -> None:
         grammar = load_grammar("python")
-        reducer = Reducer(grammar, "sleep 100")
+        reducer = Reducer(grammar, test_command="sleep 100")
 
         import subprocess
 
@@ -49,10 +49,26 @@ class TestIsInteresting:
             assert reducer._is_interesting(b"anything") is False
 
 
+class TestIsInterestingPytest:
+    def test_passing_test(self) -> None:
+        grammar = load_grammar("python")
+        test_spec = str(FIXTURES / "interesting_test.py::test_still_fails")
+        reducer = Reducer(grammar, test_spec=test_spec)
+        source = b"def fibonacci(n): pass\n"
+        assert reducer._is_interesting(source) is True
+
+    def test_failing_test(self) -> None:
+        grammar = load_grammar("python")
+        test_spec = str(FIXTURES / "interesting_test.py::test_still_fails")
+        reducer = Reducer(grammar, test_spec=test_spec)
+        source = b"def other(): pass\n"
+        assert reducer._is_interesting(source) is False
+
+
 class TestShouldStop:
     def test_max_tests(self) -> None:
         grammar = load_grammar("python")
-        reducer = Reducer(grammar, "true", max_tests=5)
+        reducer = Reducer(grammar, test_command="true", max_tests=5)
         import time
 
         start = time.monotonic()
@@ -61,7 +77,7 @@ class TestShouldStop:
 
     def test_max_time(self) -> None:
         grammar = load_grammar("python")
-        reducer = Reducer(grammar, "true", max_time=0.001)
+        reducer = Reducer(grammar, test_command="true", max_time=0.001)
         import time
 
         start = time.monotonic()
@@ -73,7 +89,7 @@ class TestReduce:
     def test_uninteresting_input(self) -> None:
         grammar = load_grammar("python")
         source = b"pass\n"
-        reducer = Reducer(grammar, "false")
+        reducer = Reducer(grammar, test_command="false")
         result = reducer.reduce(source)
         assert result.source == source
         assert result.tests_run == 0
@@ -81,7 +97,9 @@ class TestReduce:
     def test_reduce_small_input(self) -> None:
         grammar = load_grammar("python")
         source = b"def foo(): pass\nx = 1\n"
-        reducer = Reducer(grammar, "true", max_tests=1, verbose=False, quiet=True)
+        reducer = Reducer(
+            grammar, test_command="true", max_tests=1, verbose=False, quiet=True
+        )
         result = reducer.reduce(source)
         assert result.tests_run >= 1
         assert len(result.source) <= len(source)
@@ -89,16 +107,24 @@ class TestReduce:
     def test_max_tests_limit(self) -> None:
         grammar = load_grammar("python")
         source = b"def foo(): pass\nx = 1\n"
-        reducer = Reducer(grammar, "true", max_tests=2, quiet=True)
+        reducer = Reducer(grammar, test_command="true", max_tests=2, quiet=True)
         result = reducer.reduce(source)
         assert result.tests_run <= 2
 
     def test_result_type(self) -> None:
         grammar = load_grammar("python")
         source = b"pass\n"
-        reducer = Reducer(grammar, "false")
+        reducer = Reducer(grammar, test_command="false")
         result = reducer.reduce(source)
         assert isinstance(result, ReduceResult)
         assert isinstance(result.source, bytes)
         assert isinstance(result.tests_run, int)
         assert isinstance(result.elapsed_seconds, float)
+
+    def test_requires_test_spec_or_command(self) -> None:
+        grammar = load_grammar("python")
+        try:
+            Reducer(grammar)
+            assert False, "Should raise ValueError"
+        except ValueError:
+            pass

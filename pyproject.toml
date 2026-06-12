@@ -26,3 +26,7 @@ dev = [
     "ruff>=0.15.17",
     "ty>=0.0.49",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--ignore=tests/fixtures"

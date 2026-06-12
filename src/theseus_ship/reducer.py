@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import shlex
 import subprocess
+import sys
+import tempfile
 import time
 from dataclasses import dataclass
 
@@ -35,14 +38,19 @@ class Reducer:
     def __init__(
         self,
         grammar: Grammar,
-        test_command: str,
+        test_spec: str | None = None,
+        test_command: str | None = None,
         max_time: float | None = None,
         max_tests: int | None = None,
         jobs: int = 1,
         verbose: bool = False,
         quiet: bool = False,
     ) -> None:
+        if test_spec is None and test_command is None:
+            msg = "Either test_spec or test_command must be provided"
+            raise ValueError(msg)
         self._grammar = grammar
+        self._test_spec = test_spec
         self._test_command = test_command
         self._max_time = max_time
         self._max_tests = max_tests
@@ -107,6 +115,47 @@ class Reducer:
 
         self._tests_run += 1
 
+        if self._test_spec is not None:
+            is_interesting = self._is_interesting_pytest(source)
+        else:
+            is_interesting = self._is_interesting_command(source)
+
+        self._cache.set(source, is_interesting)
+        return is_interesting
+
+    def _is_interesting_pytest(self, source: bytes) -> bool:
+        assert self._test_spec is not None
+        with tempfile.NamedTemporaryFile(mode="wb", suffix=".py", delete=False) as f:
+            f.write(source)
+            temp_path = f.name
+
+        try:
+            env = os.environ.copy()
+            env["THESEUS_CANDIDATE"] = temp_path
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    self._test_spec,
+                    "-x",
+                    "--tb=no",
+                    "-q",
+                ],
+                capture_output=True,
+                timeout=60,
+                env=env,
+            )
+            return result.returncode == 0
+        except subprocess.TimeoutExpired:
+            return False
+        except Exception:
+            return False
+        finally:
+            os.unlink(temp_path)
+
+    def _is_interesting_command(self, source: bytes) -> bool:
+        assert self._test_command is not None
         try:
             cmd_parts = shlex.split(self._test_command)
             result = subprocess.run(
@@ -115,14 +164,11 @@ class Reducer:
                 capture_output=True,
                 timeout=60,
             )
-            is_interesting = result.returncode == 0
+            return result.returncode == 0
         except subprocess.TimeoutExpired:
-            is_interesting = False
+            return False
         except Exception:
-            is_interesting = False
-
-        self._cache.set(source, is_interesting)
-        return is_interesting
+            return False
 
     def _should_stop(self, tests_run: int, start_time: float) -> bool:
         if self._max_tests is not None and tests_run >= self._max_tests:

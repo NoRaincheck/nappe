@@ -42,14 +42,14 @@ uv add tree-sitter tree-sitter-python
 ## Usage
 
 ```bash
-# Reduce a file, keeping only what triggers the interestingness test
-uv run theseus-ship --test "grep -q 'error'" input.py
+# Reduce using a pytest interestingness test (recommended)
+uv run theseus-ship --test test_interesting.py::test_still_fails input.py
 
-# With a custom test script
-uv run theseus-ship --test "./check.sh" input.js
+# Reduce using a shell command (backward compatible)
+uv run theseus-ship --test-cmd "grep -q 'error'" input.py
 
 # Limit reduction time
-uv run theseus-ship --test "./check.sh" --max-time 30m --max-tests 1000 input.py
+uv run theseus-ship --test test_interesting.py --max-time 30m --max-tests 1000 input.py
 ```
 
 ## Example
@@ -84,18 +84,20 @@ if __name__ == "__main__":
         print(fibonacci(i))
 ```
 
-Run with an interestingness test that checks for `def fibonacci` and `print(`:
-
-`check.py`:
+Write a pytest interestingness test (`test_interesting.py`):
 ```python
-import sys
+import os
 
-content = sys.stdin.read()
-sys.exit(0 if "def fibonacci" in content and "print(" in content else 1)
+def test_still_fails():
+    """Exit 0 = candidate is still interesting (bug still present)."""
+    candidate = os.environ["THESEUS_CANDIDATE"]
+    content = open(candidate).read()
+    assert "def fibonacci" in content and "print(" in content
 ```
 
+Run the reducer:
 ```bash
-uv run theseus-ship --test "python3 check.py" input.py
+uv run theseus-ship --test test_interesting.py::test_still_fails input.py
 ```
 
 **After** (`input.py`):

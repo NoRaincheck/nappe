@@ -24,7 +24,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         description="Syntax-guided program reduction (Perses algorithm)",
     )
     parser.add_argument("input", help="Source file to reduce")
-    parser.add_argument("--test", required=True, help="Interestingness test command")
+
+    test_group = parser.add_mutually_exclusive_group(required=True)
+    test_group.add_argument(
+        "--test",
+        help="Pytest test specification (e.g. test_file.py::test_name)",
+    )
+    test_group.add_argument(
+        "--test-cmd",
+        help="Shell command (exit 0 = interesting, receives source on stdin)",
+    )
+
     parser.add_argument("--lang", help="Override language detection")
     parser.add_argument(
         "-o", "--output", help="Output file path (default: overwrite input)"
@@ -73,7 +83,8 @@ def _run(args: argparse.Namespace) -> int:
 
     reducer = Reducer(
         grammar=grammar,
-        test_command=args.test,
+        test_spec=args.test,
+        test_command=args.test_cmd,
         max_time=args.max_time,
         max_tests=args.max_tests,
         jobs=args.jobs,
