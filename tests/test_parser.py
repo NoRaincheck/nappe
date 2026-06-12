@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from theseus_ship.grammar import load_grammar
-from theseus_ship.parser import parse_source, has_syntax_errors
+from theseus_ship.parser import parse_source, reparse_source, has_syntax_errors
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -68,3 +68,49 @@ class TestParseSource:
         assert result.root_node.kind == "module"
         assert result.root_node.token_count == 1
         assert result.root_node.child_kinds == ()
+
+    def test_tree_field(self) -> None:
+        grammar = load_grammar("python")
+        source = b"def foo(): pass\n"
+        result = parse_source(source, grammar)
+        assert result.tree is not None
+
+
+class TestReparseSource:
+    def test_identical_input(self) -> None:
+        grammar = load_grammar("python")
+        source = b"def foo(): pass\ndef bar(): pass\n"
+        result1 = parse_source(source, grammar)
+        result2 = reparse_source(source, result1, grammar)
+
+        assert result1.root_node.kind == result2.root_node.kind
+        assert result1.error_node_count == result2.error_node_count
+        assert result1.source_bytes == result2.source_bytes
+
+    def test_changed_input(self) -> None:
+        grammar = load_grammar("python")
+        src1 = b"def foo(): pass\n"
+        result1 = parse_source(src1, grammar)
+
+        src2 = b"def bar(): pass\n"
+        result2 = reparse_source(src2, result1, grammar)
+
+        assert result2.source_bytes == src2
+        assert result2.root_node.kind == "module"
+        assert result2.error_node_count == 0
+        func_nodes = [n for n in result2.all_nodes if n.kind == "function_definition"]
+        assert len(func_nodes) == 1
+        assert func_nodes[0].byte_start >= 0
+
+    def test_delete_node(self) -> None:
+        grammar = load_grammar("python")
+        src1 = b"def foo(): pass\ndef bar(): pass\n"
+        result1 = parse_source(src1, grammar)
+
+        src2 = b"def foo(): pass\n"
+        result2 = reparse_source(src2, result1, grammar)
+
+        assert result2.source_bytes == src2
+        assert result2.error_node_count == 0
+        func_nodes = [n for n in result2.all_nodes if n.kind == "function_definition"]
+        assert len(func_nodes) == 1
